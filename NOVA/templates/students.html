@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – Student Directory</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link">Dashboard</a></li>
+      <li><a href="/students" class="nav-link active">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header class="top-nav">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search by student name or ID..." oninput="fetchTable()">
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="alert('Use the Add Student form or React UI to enroll.')">+ Add Student</button>
+      </div>
+    </header>
+
+    <div class="content-body">
+      <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px;">Student Directory & Academic Tracking</h2>
+
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Department</th>
+              <th>CGPA</th>
+              <th>Attendance</th>
+              <th>Avg Marks</th>
+              <th>Risk Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94A3B8; padding: 24px;">Loading students...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fetchTable() {
+      const q = document.getElementById('searchInput').value;
+      fetch('/api/students?search=' + encodeURIComponent(q))
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('studentTableBody');
+          tbody.innerHTML = '';
+          data.students.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>\${s.name}</strong><br><span style="font-size:11px;color:#64748B;">\${s.student_id}</span></td>
+              <td>\${s.department} (Y\${s.year})</td>
+              <td><strong>\${s.cgpa}</strong></td>
+              <td>\${s.attendance}%</td>
+              <td>\${s.avg_marks}%</td>
+              <td><span class="badge badge-\${s.risk_category === 'High' ? 'high' : s.risk_category === 'Moderate' ? 'mod' : 'low'}">\${s.risk_category} (\${Math.round(s.risk_score)})</span></td>
+              <td><a href="/students/\${s.id}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">Profile</a></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        });
+    }
+    fetchTable();
+  </script>
+</body>
+</html>

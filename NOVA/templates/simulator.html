@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – What-If Simulator</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link">Dashboard</a></li>
+      <li><a href="/students" class="nav-link">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link active">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content-body">
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px;">NOVA What-If Academic Simulator</h2>
+      <p style="font-size: 12px; color: #64748B; margin-bottom: 24px;">Adjust hypothetical sliders to project academic risk score outcomes without altering permanent records.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div class="card">
+          <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 16px;">Hypothetical Sliders</h3>
+          <div style="margin-bottom: 16px;">
+            <label style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+              <span>Simulated Attendance</span> <span id="attVal">75%</span>
+            </label>
+            <input type="range" id="attInput" min="30" max="100" value="75" style="width: 100%;" oninput="runSim()">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+              <span>Simulated Marks</span> <span id="marksVal">60%</span>
+            </label>
+            <input type="range" id="marksInput" min="20" max="100" value="60" style="width: 100%;" oninput="runSim()">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+              <span>Simulated CGPA</span> <span id="cgpaVal">6.5</span>
+            </label>
+            <input type="range" id="cgpaInput" min="3.0" max="10.0" step="0.1" value="6.5" style="width: 100%;" oninput="runSim()">
+          </div>
+        </div>
+
+        <div class="card" style="background: #F8F9FE;">
+          <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 16px;">Projected Risk Outcome</h3>
+          <h1 id="projScore" style="font-size: 48px; font-weight: 800; color: #7965E8;">--</h1>
+          <p id="projCategory" style="font-weight: 700; margin-bottom: 12px;">--</p>
+          <p id="projNotice" style="font-size: 11px; color: #64748B;">--</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function runSim() {
+      const att = document.getElementById('attInput').value;
+      const marks = document.getElementById('marksInput').value;
+      const cgpa = document.getElementById('cgpaInput').value;
+      document.getElementById('attVal').innerText = att + '%';
+      document.getElementById('marksVal').innerText = marks + '%';
+      document.getElementById('cgpaVal').innerText = cgpa;
+
+      fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendance: att, avgMarks: marks, cgpa: cgpa, assignmentCompletion: 75 })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('projScore').innerText = data.simulated.riskScore + ' / 100';
+        document.getElementById('projCategory').innerText = data.simulated.riskCategory + ' Risk Tier';
+        document.getElementById('projNotice').innerText = data.simulated.primaryConcern;
+      });
+    }
+    runSim();
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "NOVA – AI-Powered Student Analytics and Success Platform",
+  "description": "AI-powered student analytics and success platform to analyze academic performance, identify students needing support, explain risk factors, and track faculty interventions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

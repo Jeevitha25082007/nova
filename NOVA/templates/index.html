@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – Executive Dashboard</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link active">Dashboard</a></li>
+      <li><a href="/students" class="nav-link">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header class="top-nav">
+      <div class="search-bar">
+        <input type="text" placeholder="Search students, courses, or IDs...">
+      </div>
+      <div>
+        <a href="/students" class="btn btn-primary">+ Add Student</a>
+      </div>
+    </header>
+
+    <div class="content-body">
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 20px;">Institutional Executive Overview</h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px;" id="kpi-container">
+        <div class="card" style="background: #F4F1FE; border-color: #E9E3FF;">
+          <p style="font-size: 11px; font-weight: 700; color: #64748B;">TOTAL STUDENTS</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #202747;" id="kpi-total">--</h3>
+        </div>
+        <div class="card" style="background: #DDEBFF; border-color: #BFDBFE;">
+          <p style="font-size: 11px; font-weight: 700; color: #64748B;">AVERAGE CGPA</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #202747;" id="kpi-cgpa">--</h3>
+        </div>
+        <div class="card" style="background: #DDF5E8; border-color: #BBF7D0;">
+          <p style="font-size: 11px; font-weight: 700; color: #64748B;">AVG ATTENDANCE</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #202747;" id="kpi-att">--</h3>
+        </div>
+        <div class="card" style="background: #FEE2E2; border-color: #FECACA;">
+          <p style="font-size: 11px; font-weight: 700; color: #DC2626;">NEEDING SUPPORT</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #DC2626;" id="kpi-support">--</h3>
+        </div>
+        <div class="card" style="background: #D1FAE5; border-color: #A7F3D0;">
+          <p style="font-size: 11px; font-weight: 700; color: #059669;">PERFORMING WELL</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #059669;" id="kpi-well">--</h3>
+        </div>
+        <div class="card" style="background: #FEF3C7; border-color: #FDE68A;">
+          <p style="font-size: 11px; font-weight: 700; color: #D97706;">PENDING INTERV.</p>
+          <h3 style="font-size: 24px; font-weight: 800; color: #D97706;" id="kpi-intv">--</h3>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <div class="card">
+          <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 16px;">Department Academic Performance</h4>
+          <canvas id="deptChart" height="120"></canvas>
+        </div>
+        <div class="card">
+          <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 16px;">Risk Category Distribution</h4>
+          <canvas id="riskChart" height="180"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/dashboard')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('kpi-total').innerText = data.summary.totalStudents;
+        document.getElementById('kpi-cgpa').innerText = data.summary.avgCgpa + ' / 10';
+        document.getElementById('kpi-att').innerText = data.summary.avgAttendance + '%';
+        document.getElementById('kpi-support').innerText = data.summary.needingSupport;
+        document.getElementById('kpi-well').innerText = data.summary.performingWell;
+        document.getElementById('kpi-intv').innerText = data.summary.pendingInterventions;
+
+        // Dept Chart
+        new Chart(document.getElementById('deptChart'), {
+          type: 'bar',
+          data: {
+            labels: data.charts.departmentPerformance.map(d => d.department),
+            datasets: [{
+              label: 'Average CGPA',
+              data: data.charts.departmentPerformance.map(d => d.avgCgpa),
+              backgroundColor: '#7965E8'
+            }]
+          }
+        });
+
+        // Risk Chart
+        new Chart(document.getElementById('riskChart'), {
+          type: 'doughnut',
+          data: {
+            labels: data.charts.riskDistribution.map(r => r.name),
+            datasets: [{
+              data: data.charts.riskDistribution.map(r => r.value),
+              backgroundColor: data.charts.riskDistribution.map(r => r.color)
+            }]
+          }
+        });
+      });
+  </script>
+</body>
+</html>

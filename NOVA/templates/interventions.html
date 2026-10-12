@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – Faculty Interventions</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link">Dashboard</a></li>
+      <li><a href="/students" class="nav-link">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link active">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content-body">
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">Faculty Academic Interventions</h2>
+      <div id="interventionsList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+        <p>Loading interventions...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/interventions')
+      .then(res => res.json())
+      .then(data => {
+        const c = document.getElementById('interventionsList');
+        c.innerHTML = '';
+        data.forEach(i => {
+          const div = document.createElement('div');
+          div.className = 'card';
+          div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <strong>\${i.student_name} (\${i.student_code})</strong>
+              <span class="badge badge-mod">\${i.status}</span>
+            </div>
+            <p style="font-size:12px; margin-bottom:4px;"><strong>Issue:</strong> \${i.issue}</p>
+            <p style="font-size:12px; color:#64748B;"><strong>Action Plan:</strong> \${i.action_plan}</p>
+            <p style="font-size:11px; color:#94A3B8; margin-top:8px;">Faculty Mentor: \${i.faculty_name || 'Department Advisor'} • Due: \${i.due_date}</p>
+          `;
+          c.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>

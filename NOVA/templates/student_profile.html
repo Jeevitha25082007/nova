@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – Student Profile</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link">Dashboard</a></li>
+      <li><a href="/students" class="nav-link active">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content-body" id="profileContent">
+      <p style="color: #64748B;">Loading profile details...</p>
+    </div>
+  </div>
+
+  <script>
+    const studentId = {{ student_id }};
+    fetch('/api/students/' + studentId)
+      .then(res => res.json())
+      .then(data => {
+        const s = data.student;
+        const r = data.riskAnalysis;
+        document.getElementById('profileContent').innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+            <div>
+              <h2 style="font-size: 24px; font-weight: 800;">\${s.name}</h2>
+              <p style="color:#64748B; font-size:12px;">\${s.student_id} • \${s.department} • Year \${s.year}</p>
+            </div>
+            <a href="/students" class="btn btn-outline">&larr; Back to Directory</a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+            <div class="card"><p style="font-size:11px; color:#64748B;">CGPA</p><h3 style="font-size:22px;">\${s.cgpa}</h3></div>
+            <div class="card"><p style="font-size:11px; color:#64748B;">ATTENDANCE</p><h3 style="font-size:22px;">\${s.attendance}%</h3></div>
+            <div class="card"><p style="font-size:11px; color:#64748B;">AVG MARKS</p><h3 style="font-size:22px;">\${s.avg_marks}%</h3></div>
+            <div class="card"><p style="font-size:11px; color:#64748B;">RISK SCORE</p><h3 style="font-size:22px;">\${r.riskScore} (\${r.riskCategory})</h3></div>
+          </div>
+
+          <div class="card" style="margin-bottom: 24px;">
+            <h4 style="font-size:14px; font-weight:800; margin-bottom:12px;">AI Explainable Risk Factor Breakdown</h4>
+            \${r.factors.map(f => `
+              <div style="margin-bottom: 12px;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>\${f.name}</strong> (\${f.currentValue})</span>
+                  <span>Contribution: \${f.scoreContribution}% (Weight: \${Math.round(f.weight * 100)}%)</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width: \${f.scoreContribution}%; background: \${f.status === 'critical' ? '#EF4444' : f.status === 'warning' ? '#F59E0B' : '#10B981'};"></div></div>
+                <p style="font-size:11px; color:#64748B; margin-top:2px;">\${f.details}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      });
+  </script>
+</body>
+</html>

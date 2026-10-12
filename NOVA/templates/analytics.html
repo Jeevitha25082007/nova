@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA – Explainable AI Analytics</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="nova-sidebar">
+    <div class="nova-brand">
+      <div class="nova-logo">N</div>
+      <div>
+        <h1>NOVA</h1>
+        <span>Student Success</span>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="/" class="nav-link">Dashboard</a></li>
+      <li><a href="/students" class="nav-link">Student Directory</a></li>
+      <li><a href="/analytics" class="nav-link active">AI Risk Analytics</a></li>
+      <li><a href="/interventions" class="nav-link">Interventions</a></li>
+      <li><a href="/simulator" class="nav-link">What-If Simulator</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content-body">
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 12px;">Explainable Academic Risk Architecture</h2>
+      <div class="card" style="margin-bottom: 24px; background: #FFFBEB; border-color: #FDE68A;">
+        <strong style="color: #92400E;">Ethical Screening Notice:</strong>
+        <p style="font-size: 12px; color: #78350F; margin-top: 4px;">
+          The NOVA Academic Support Risk Score is a screening heuristic designed to guide early mentoring and tutorial interventions. It is not an evaluation of final academic failure or student capability.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+        <div class="card">
+          <h4>Attendance Weight</h4>
+          <h2 style="color: #7965E8;">30%</h2>
+          <p style="font-size: 11px; color: #64748B;">Warning at &lt;75%</p>
+        </div>
+        <div class="card">
+          <h4>Marks Weight</h4>
+          <h2 style="color: #7965E8;">30%</h2>
+          <p style="font-size: 11px; color: #64748B;">Warning at &lt;60%</p>
+        </div>
+        <div class="card">
+          <h4>CGPA Weight</h4>
+          <h2 style="color: #7965E8;">25%</h2>
+          <p style="font-size: 11px; color: #64748B;">Warning at &lt;6.5</p>
+        </div>
+        <div class="card">
+          <h4>Coursework Weight</h4>
+          <h2 style="color: #7965E8;">15%</h2>
+          <p style="font-size: 11px; color: #64748B;">Warning at &lt;75%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
